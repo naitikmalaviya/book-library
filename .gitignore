@@ -1,0 +1,9 @@
+Auth/bin/*
+Auth/obj/*
+Auth/.vscode/*
+Utility/bin/*
+Utility/obj/*
+Utility/.vscode/*
+BookLibrary/bin/*
+BookLibrary/obj/*
+BookLibrary/.vscode/*

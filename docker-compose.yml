@@ -1,0 +1,48 @@
+version: "3.0"
+
+services:
+  auth:
+    build:
+      context: .
+      dockerfile: Auth/Dockerfile
+    image: auth:latest
+    container_name: auth
+    hostname: auth
+    depends_on:
+      - rabbitmq
+      - mariadb
+    ports:
+      - 5001:5001
+  book-library:
+    build:
+      context: .
+      dockerfile: BookLibrary/Dockerfile
+    image: book-library:latest
+    container_name: book-library
+    hostname: book-library
+    depends_on:
+      - rabbitmq
+      - mariadb
+    ports:
+      - 5000:5000
+  mariadb:
+    image: mariadb/server:10.2
+    container_name: mariadb
+    hostname: mariadb
+    environment:
+      MARIADB_ALLOW_EMPTY_PASSWORD: "yes"
+    ports:
+      - "3306:3306"
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: rabbitmq
+    container_name: rabbitmq
+    volumes:
+      - ./RabbitMQ/definitions.json:/etc/rabbitmq/definitions.json
+    ports:
+      - 5672:5672
+      - 15672:15672
+networks:
+  default:
+    external:
+      name: gravity
