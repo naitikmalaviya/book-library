@@ -1,6 +1,6 @@
 ## Getting Started
 
-This project uses RabbitMQ Message-Broker and MariaDB. This project contains two Dotnet microservices.
+This project follows Microservice architecture. This project contains two Dotnet microservices which uses RabbitMQ as Message-Broker tool and Mariadb for data persistency.
 
 ### Prerequisites
 
@@ -36,6 +36,8 @@ This project uses RabbitMQ Message-Broker and MariaDB. This project contains two
 ![](diagram.jpg)
 
 
+
+Dependency Injection (DI) software design pattern is followed in both dotnet service code.
 
 **Auth Service:**  All user related operations (Create User) and authentication related operations (Generate JWT token, Generate user password hash) should be in Auth service. At user creation time, Auth service creates user and sends message with user data in RabbitMQ queue so other microservices can also sync their User tables and add this new user.
 
