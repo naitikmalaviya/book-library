@@ -51,6 +51,7 @@
             services.AddSingleton<IMessageSenderService, MessageSenderService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IEncryptionService, EncryptionService>();
+            services.AddTransient<ITokenService, TokenService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

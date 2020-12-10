@@ -1,17 +1,12 @@
 namespace Auth.Services
 {
     using System;
-    using System.IdentityModel.Tokens.Jwt;
-    using System.Security.Claims;
-    using System.Text;
     using System.Threading.Tasks;
     using Auth.Constants;
     using Auth.Interfaces;
     using Auth.Models;
     using Dapper;
     using Microsoft.Extensions.Configuration;
-    using Microsoft.IdentityModel.Tokens;
-    using Utility.Constants;
     using Utility.DatabaseAccess;
     using Utility.Models;
 
@@ -20,22 +15,21 @@ namespace Auth.Services
         private readonly IDatabaseIO databaseIO;
         private readonly IMessageSenderService messageSenderService;
         private readonly IEncryptionService encryptionService;
+        private readonly ITokenService tokenService;
         private readonly string queueName;
-        private readonly string jwtSecret;
-        private readonly int tokenExpiry;
 
         public UserService(
             IConfiguration config,
             IDatabaseIO injectedDatabaseIO,
             IMessageSenderService injectedMSS,
-            IEncryptionService injectedEncryptionService)
+            IEncryptionService injectedEncryptionService,
+            ITokenService injectedTokenService)
         {
             databaseIO = injectedDatabaseIO;
             messageSenderService = injectedMSS;
             encryptionService = injectedEncryptionService;
+            tokenService = injectedTokenService;
             queueName = config["RabbitMQ:QueueName"];
-            jwtSecret = config["JWT:Secret"];
-            tokenExpiry = Int32.Parse(config["JWT:Expiry"]);
         }
 
         public async Task<string> AuthenticateAsync(UserLoginModel user)
@@ -52,7 +46,7 @@ namespace Auth.Services
                 return null;
             }
 
-            return GenerateJWTToken(dbUserData);
+            return tokenService.GenerateToken(dbUserData);
         }
 
         public async Task CreateUserAsync(UserCreationModel userModel)
@@ -77,27 +71,6 @@ namespace Auth.Services
             }
 
             messageSenderService.SendMessage(queueName, dbUserModel);
-        }
-
-        private string GenerateJWTToken(UserModel userData)
-        {
-            JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
-            byte[] key = Encoding.ASCII.GetBytes(jwtSecret);
-            SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[] 
-                {
-                    new Claim(ClaimTypes.Sid, userData.userId.ToString()),
-                    new Claim(ClaimTypes.Role, UserRole.GetUserRole(userData.clearanceLevel))
-                }),
-                Expires = DateTime.UtcNow.AddDays(tokenExpiry),
-                SigningCredentials = new SigningCredentials(
-                                        new SymmetricSecurityKey(key),
-                                        SecurityAlgorithms.HmacSha256Signature)
-            };
-            SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
-
-            return tokenHandler.WriteToken(token);
         }
     }
 }
