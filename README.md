@@ -11,12 +11,6 @@ This project follows Microservice architecture. This project contains two Dotnet
 
 ### Steps
 
-- Create docker network.
-
-  ```shell
-  docker network create gravity
-  ```
-
 - Run docker-compose file from root directory. This should build and create 4 containers. (auth, book-library, rabbitmq, mariadb).  After this step `http://localhost:5000/swagger` and `http://localhost:5001/swagger` should be accessible from browser.
 
   ```shell

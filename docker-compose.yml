@@ -44,4 +44,4 @@ services:
       - 15672:15672
 networks:
   default:
-    name: gravity
+      name: gravity
