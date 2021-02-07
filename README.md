@@ -1,5 +1,7 @@
-## Getting Started
+[![Build Status](https://travis-ci.com/naitikmalaviya/book-library.svg?branch=main)](https://travis-ci.com/naitikmalaviya/book-library)
 
+
+## Getting Started
 This project follows Microservice architecture. This project contains two Dotnet microservices which uses RabbitMQ as Message-Broker tool and Mariadb for data persistency.
 
 ### Prerequisites

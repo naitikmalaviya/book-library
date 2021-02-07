@@ -1,0 +1,13 @@
+sudo: required
+
+language: generic
+
+services:
+  - docker
+
+script:
+  - docker-compose up -d
+
+after_success:
+  - docker --version
+  - docker-compose --version
